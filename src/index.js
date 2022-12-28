@@ -3,12 +3,20 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { StyleProvider } from '@ant-design/cssinjs';
+import { ConfigProvider } from 'antd';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <ConfigProvider
+    theme={{
+      token: {}
+    }}
+  >
+    <StyleProvider hashPriority="high">
+      <App />
+    </StyleProvider>
+  </ConfigProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
