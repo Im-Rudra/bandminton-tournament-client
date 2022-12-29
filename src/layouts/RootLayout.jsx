@@ -5,7 +5,7 @@ import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { MdSpaceDashboard } from 'react-icons/md';
 import { AiFillHome } from 'react-icons/ai';
 import { RiLoginBoxFill } from 'react-icons/ri';
-import { HiMenu } from 'react-icons/hi';
+// import { HiMenu } from 'react-icons/hi';
 
 import FloatingMenu from '../components/FloatingMenu/FloatingMenu';
 import MainMenuButton from '../components/MainMenu/MainMenuButton';
@@ -22,8 +22,8 @@ const menuList = [
     icon: <BsFillInfoCircleFill />
   },
   {
-    title: 'Dashboard',
-    url: '/',
+    title: 'Register',
+    url: 'register',
     icon: <MdSpaceDashboard />
   },
   {
@@ -68,7 +68,7 @@ const RootLayout = () => {
                 aria-expanded="false"
               >
                 <span className="sr-only">Open main menu</span>
-                {/* <svg
+                <svg
                   className="w-6 h-6"
                   aria-hidden="true"
                   fill="currentColor"
@@ -80,8 +80,8 @@ const RootLayout = () => {
                     d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
                     clipRule="evenodd"
                   ></path>
-                </svg> */}
-                <HiMenu className="text-3xl" />
+                </svg>
+                {/* <HiMenu className="text-3xl" /> */}
               </button>
               <div id="targetEl" className="fixed right-2 top-16">
                 <FloatingMenu collapse={collapse} menuList={menuList} />
@@ -103,7 +103,7 @@ const RootLayout = () => {
           </div>
         </nav>
       </div>
-      <div className="mt-20">
+      <div className="mt-20 mx-auto container">
         <Outlet />
       </div>
     </div>
