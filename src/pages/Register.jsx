@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
-import { AutoComplete, Button, Card, Form, Input, Select, Space, Tooltip, Typography } from 'antd';
-import { PhoneInput, international } from 'react-contact-number-input';
-import countries from '../components/countries';
+import { Button, Card, Form, Input } from 'antd';
 import axios from 'axios';
-const { Option } = Select;
+import useAuth from '../hooks/useAuth';
 const Register = () => {
+  const { setUser } = useAuth();
+
   const registerRequest = (val) => {
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'register', val, { withCredentials: true })
       .then((res) => {
-        console.log(res);
+        res.data?.id && setUser(res.data);
+        console.log(res.data);
       })
       .catch((err) => {
+        setUser(null);
         console.log(err.response.data);
       });
   };
@@ -24,7 +25,7 @@ const Register = () => {
 
   return (
     <div className="mx-auto">
-      <div className="flex justify-center sm:mt-20 mt-36">
+      <div className="flex justify-center sm:mt-0 lg:mt-36">
         <Card
           style={{
             minWidth: 300,

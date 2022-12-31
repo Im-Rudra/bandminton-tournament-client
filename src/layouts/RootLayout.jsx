@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { Button } from 'antd';
+import { Link, Outlet } from 'react-router-dom';
+import { Avatar, Button, Typography } from 'antd';
 import { BsFillInfoCircleFill } from 'react-icons/bs';
-import { MdSpaceDashboard } from 'react-icons/md';
+import { MdAdminPanelSettings, MdSpaceDashboard } from 'react-icons/md';
 import { AiFillHome } from 'react-icons/ai';
 import { RiLoginBoxFill } from 'react-icons/ri';
 // import { HiMenu } from 'react-icons/hi';
 
 import FloatingMenu from '../components/FloatingMenu/FloatingMenu';
 import MainMenuButton from '../components/MainMenu/MainMenuButton';
+import axios from 'axios';
+import useAuth from '../hooks/useAuth';
+import logo from '../img/logo.png';
+import { UserOutlined } from '@ant-design/icons';
 
 const menuList = [
   {
@@ -20,7 +24,10 @@ const menuList = [
     title: 'About Us',
     url: '/',
     icon: <BsFillInfoCircleFill />
-  },
+  }
+];
+
+const userMenuList = [
   {
     title: 'Register',
     url: 'register',
@@ -33,32 +40,64 @@ const menuList = [
   }
 ];
 
+const adminMenuList = [
+  {
+    title: 'Admin',
+    url: 'admin',
+    icon: <MdAdminPanelSettings />
+  }
+];
+
 const RootLayout = () => {
   const [collapse, setCollapse] = useState(false);
   const collapseHandler = () => setCollapse((prev) => !prev);
+  const { user, setUser } = useAuth();
+
+  const handleLogout = () => {
+    axios
+      .post(process.env.REACT_APP_SERVER_ORIGIN + 'logout', null, { withCredentials: true })
+      .then((res) => {
+        setUser(null);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div>
       <div>
         <nav className="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
           <div className="container flex flex-wrap items-center justify-between mx-auto">
-            <a href="https://flowbite.com/" className="flex items-center">
-              <img
-                src="https://flowbite.com/docs/images/logo.svg"
-                className="h-6 mr-3 sm:h-9"
-                alt="Flowbite Logo"
-              />
+            <Link to="/" className="flex items-center">
+              <img src={logo} className="h-6 mr-3 sm:h-9" alt="Flowbite Logo" />
               <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                Flowbite
+                IANT
               </span>
-            </a>
-            <div className="flex md:order-2">
+            </Link>
+            <div className="flex items-center md:order-2">
               {/* <button
                 type="button"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Get started
               </button> */}
-              <Button type="primary">Get Started</Button>
+              {user?.id && (
+                <>
+                  {/* <Avatar
+                    shape="square"
+                    style={{ backgroundColor: '#87d068' }}
+                    icon={<UserOutlined />}
+                  /> */}
+                  <Typography.Text keyboard style={{ marginLeft: 10 }}>
+                    {user.lastName}
+                  </Typography.Text>
+                  <Button onClick={handleLogout} type="primary" style={{ marginLeft: 10 }}>
+                    Logout
+                  </Button>
+                </>
+              )}
               <button
                 onClick={collapseHandler}
                 data-collapse-toggle="navbar-sticky"
@@ -93,11 +132,23 @@ const RootLayout = () => {
             >
               <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 {/* Main menu here */}
-                {menuList.map((menu, i) => (
-                  <li key={i + 1}>
+                {menuList.map((menu) => (
+                  <li key={menu.url}>
                     <MainMenuButton config={menu} />
                   </li>
                 ))}
+                {user?.role === 'Administrator' &&
+                  adminMenuList.map((menu) => (
+                    <li key={menu.url}>
+                      <MainMenuButton config={menu} />
+                    </li>
+                  ))}
+                {!user?.id &&
+                  userMenuList.map((menu) => (
+                    <li key={menu.url}>
+                      <MainMenuButton config={menu} />
+                    </li>
+                  ))}
               </ul>
             </div>
           </div>

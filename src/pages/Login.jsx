@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
-import { Button, Card, Checkbox, Form, Input, Segmented } from 'antd';
+import React from 'react';
+import { Button, Card, Checkbox, Form, Input } from 'antd';
 import { PhoneFilled, MailFilled } from '@ant-design/icons';
+import axios from 'axios';
+import useAuth from '../hooks/useAuth';
 
 const Login = () => {
-  const [segVal, setSegVal] = useState('email');
-  const onFinish = (values) => {
-    console.log('Success:', values);
+  const { setUser } = useAuth();
+
+  const submitRequest = (val) => {
+    axios
+      .post(process.env.REACT_APP_SERVER_ORIGIN + 'login', val, { withCredentials: true })
+      .then((res) => {
+        res.data?.id && setUser(res.data);
+        console.log(res);
+      })
+      .catch((err) => {
+        setUser(null);
+        console.log(err);
+      });
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
+  const onFinish = (values) => {
+    submitRequest(values);
   };
 
   const options = [
@@ -33,54 +45,27 @@ const Login = () => {
             width: 300
           }}
         >
-          <div className="mb-6 flex justify-center">
-            <Segmented className="mx-auto" options={options} value={segVal} onChange={setSegVal} />
-          </div>
           <Form
             name="basic"
             layout="vertical"
-            // labelCol={{
-            //   span: 4
-            // }}
-            // wrapperCol={{
-            //   span: 16
-            // }}
             initialValues={{
               remember: true
             }}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
-            {segVal === 'email' && (
-              <Form.Item
-                label="Email"
-                name="email"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Email cannot be empty'
-                  }
-                ]}
-              >
-                <Input placeholder="Enter your email" />
-              </Form.Item>
-            )}
-
-            {segVal === 'phone' && (
-              <Form.Item
-                label="Phone"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Phone number cannot be empty'
-                  }
-                ]}
-              >
-                <Input placeholder="Enter your phone" />
-              </Form.Item>
-            )}
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                {
+                  required: true,
+                  message: 'Email cannot be empty'
+                }
+              ]}
+            >
+              <Input placeholder="Enter your email" />
+            </Form.Item>
 
             <Form.Item
               label="Password"
@@ -95,24 +80,12 @@ const Login = () => {
               <Input.Password placeholder="Enter your password" />
             </Form.Item>
 
-            <Form.Item
-              name="remember"
-              valuePropName="checked"
-              // wrapperCol={{
-              //   offset: 4,
-              //   span: 16
-              // }}
-            >
+            <Form.Item name="remember" valuePropName="checked">
               <Checkbox>Remember me</Checkbox>
             </Form.Item>
 
-            <Form.Item
-            // wrapperCol={{
-            //   offset: 4,
-            //   span: 16
-            // }}
-            >
-              <Button type="primary" htmlType="submit">
+            <Form.Item>
+              <Button block type="primary" htmlType="submit">
                 Submit
               </Button>
             </Form.Item>

@@ -5,18 +5,21 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StyleProvider } from '@ant-design/cssinjs';
 import { ConfigProvider } from 'antd';
+import AuthProvider from './contexts/AuthProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <ConfigProvider
-    theme={{
-      token: {}
-    }}
-  >
-    <StyleProvider hashPriority="high">
-      <App />
-    </StyleProvider>
-  </ConfigProvider>
+  <AuthProvider>
+    <ConfigProvider
+      theme={{
+        token: {}
+      }}
+    >
+      <StyleProvider hashPriority="high">
+        <App />
+      </StyleProvider>
+    </ConfigProvider>
+  </AuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
