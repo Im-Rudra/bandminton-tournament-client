@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import axios from 'axios';
 const columns = [
@@ -7,20 +7,23 @@ const columns = [
     width: 100,
     dataIndex: 'firstName',
     key: 'firstName',
+    sorter: true,
     fixed: 'left'
   },
   {
     title: 'Last Name',
     width: 100,
     dataIndex: 'lastName',
-    key: 'lastName',
-    fixed: 'left'
+    sorter: true,
+    key: 'lastName'
+    // fixed: 'left'
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
     width: 100
+    // fixed: 'left'
   },
   {
     title: 'Phone',
@@ -32,7 +35,21 @@ const columns = [
     title: 'Role',
     dataIndex: 'role',
     key: 'role',
-    width: 70
+    width: 70,
+    filters: [
+      {
+        text: 'Admin',
+        value: 'Administrator'
+      },
+      {
+        text: 'Moderator',
+        value: 'Moderator'
+      },
+      {
+        text: 'User',
+        value: 'User'
+      }
+    ]
   },
   {
     title: 'Action',
@@ -42,15 +59,6 @@ const columns = [
     render: (e) => <a>action</a>
   }
 ];
-const data = [];
-for (let i = 0; i < 200; i++) {
-  data.push({
-    key: i,
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`
-  });
-}
 
 const Users = () => {
   const [totalUsers, setTotalUsers] = useState(0);
@@ -62,6 +70,23 @@ const Users = () => {
       pageSize: 10
     }
   });
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    const sortObj = sorter?.order ? { field: sorter?.field, order: sorter?.order } : null;
+    const filterObj = filters?.role ? filters : null;
+
+    setTableParams({
+      pagination,
+      filters: filterObj,
+      sorter: sortObj
+    });
+
+    // `dataSource` is useless since `pageSize` changed
+    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+      setUsers([]);
+    }
+    // console.log({ pagination, filters, sorter });
+  };
 
   const fetchUsers = async () => {
     const url = process.env.REACT_APP_SERVER_ORIGIN + 'getUsers';
@@ -86,9 +111,9 @@ const Users = () => {
     }
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [JSON.stringify(tableParams)]);
 
   return (
     <Table
@@ -96,6 +121,7 @@ const Users = () => {
       dataSource={users}
       loading={loading}
       pagination={{ ...tableParams.pagination, total: totalUsers }}
+      onChange={handleTableChange}
       scroll={{
         x: 1000,
         y: 300

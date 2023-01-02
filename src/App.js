@@ -6,9 +6,12 @@ import {
 } from 'react-router-dom';
 import AdminLayout from './layouts/AdminLayout';
 import RootLayout from './layouts/RootLayout';
+import TournamentLayout from './layouts/TournamentLayout';
+import CreateTournament from './pages/Admin/Tournament/CreateTournament';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Users from './pages/Users';
+import Tournaments from './pages/Admin/Tournament/Tournaments';
+import Users from './pages/Admin/User/Users';
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +22,10 @@ const routes = createBrowserRouter(
       </Route>
       <Route path="admin" element={<AdminLayout />}>
         <Route path="users" element={<Users />} />
+        <Route path="tournaments" element={<TournamentLayout />}>
+          <Route path="" element={<Tournaments />} />
+          <Route path="create-tournament" element={<CreateTournament />} />
+        </Route>
       </Route>
     </>
   )

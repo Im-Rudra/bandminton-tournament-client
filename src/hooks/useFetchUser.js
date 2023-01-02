@@ -10,7 +10,7 @@ const useFetchUser = () => {
         withCredentials: true
       })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         res?.data?.id && setUser(res.data);
       })
       .catch((err) => {

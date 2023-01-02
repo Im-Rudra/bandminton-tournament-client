@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
-import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import {
+  AppstoreAddOutlined,
+  TeamOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined
+} from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import logo from '../img/logo.png';
 const { Header, Content, Footer, Sider } = Layout;
 const AdminLayout = () => {
@@ -10,6 +16,23 @@ const AdminLayout = () => {
     token: { colorBgContainer }
   } = theme.useToken();
 
+  const location = useLocation();
+  const activeMenu = location.pathname.split('/')[2];
+  // console.log(location.pathname.split('/'));
+
+  const adminMenuList = [
+    {
+      key: 'users',
+      icon: <TeamOutlined />,
+      label: <Link to="users">Users</Link>
+    },
+    {
+      key: 'tournaments',
+      icon: <AppstoreAddOutlined />,
+      label: <Link to="tournaments">Tournaments</Link>
+    }
+  ];
+
   return (
     <Layout hasSider>
       <Sider
@@ -17,11 +40,11 @@ const AdminLayout = () => {
         breakpoint="md"
         collapsedWidth="50"
         onBreakpoint={(broken) => {
-          console.log(broken);
+          // console.log(broken);
           setCollapse(broken);
         }}
         onCollapse={(collapsed, type) => {
-          console.log(collapsed, type);
+          // console.log(collapsed, type);
         }}
         style={{
           overflow: 'auto',
@@ -52,14 +75,8 @@ const AdminLayout = () => {
         <Menu
           // theme="dark"
           mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[UserOutlined, VideoCameraOutlined, UploadOutlined, UserOutlined].map(
-            (icon, index) => ({
-              key: String(index + 1),
-              icon: React.createElement(icon),
-              label: `nav ${index + 1}`
-            })
-          )}
+          selectedKeys={activeMenu}
+          items={adminMenuList}
         />
       </Sider>
       <Layout

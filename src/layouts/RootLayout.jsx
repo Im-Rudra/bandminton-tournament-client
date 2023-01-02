@@ -19,12 +19,12 @@ const menuList = [
     title: 'Home',
     url: '/',
     icon: <AiFillHome />
-  },
-  {
-    title: 'About Us',
-    url: '/',
-    icon: <BsFillInfoCircleFill />
   }
+  // {
+  //   title: 'About Us',
+  //   url: '/',
+  //   icon: <BsFillInfoCircleFill />
+  // }
 ];
 
 const userMenuList = [
