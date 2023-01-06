@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { Avatar, Button, Typography } from 'antd';
 import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { MdAdminPanelSettings, MdSpaceDashboard } from 'react-icons/md';
-import { AiFillHome } from 'react-icons/ai';
+import { AiFillHome, AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { RiLoginBoxFill } from 'react-icons/ri';
 // import { HiMenu } from 'react-icons/hi';
 
@@ -13,40 +13,43 @@ import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 import logo from '../img/logo.png';
 import { UserOutlined } from '@ant-design/icons';
+import checkAccessiblity from '../utils/checkAccessiblity';
 
-const menuList = [
-  {
-    title: 'Home',
-    url: '/',
-    icon: <AiFillHome />
-  }
-  // {
-  //   title: 'About Us',
-  //   url: '/',
-  //   icon: <BsFillInfoCircleFill />
-  // }
-];
-
-const userMenuList = [
-  {
-    title: 'Register',
-    url: 'register',
-    icon: <MdSpaceDashboard />
-  },
-  {
-    title: 'Login',
-    url: 'login',
-    icon: <RiLoginBoxFill />
-  }
-];
-
-const adminMenuList = [
-  {
-    title: 'Admin',
-    url: 'admin',
-    icon: <MdAdminPanelSettings />
-  }
-];
+const mainMenuLists = {
+  generalMenuList: [
+    {
+      title: 'Home',
+      url: '/',
+      icon: <AiFillHome />
+    }
+  ],
+  userMenuList: [
+    {
+      title: 'Team Registration',
+      url: 'team-registration',
+      icon: <AiOutlineUsergroupAdd />
+    }
+  ],
+  adminMenuList: [
+    {
+      title: 'Admin',
+      url: 'admin',
+      icon: <MdAdminPanelSettings />
+    }
+  ],
+  antiUserMenuList: [
+    {
+      title: 'Register',
+      url: 'register',
+      icon: <MdSpaceDashboard />
+    },
+    {
+      title: 'Login',
+      url: 'login',
+      icon: <RiLoginBoxFill />
+    }
+  ]
+};
 
 const RootLayout = () => {
   const [collapse, setCollapse] = useState(false);
@@ -73,7 +76,7 @@ const RootLayout = () => {
             <Link to="/" className="flex items-center">
               <img src={logo} className="h-6 mr-3 sm:h-9" alt="Flowbite Logo" />
               <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                IANT
+                IANT Badminton
               </span>
             </Link>
             <div className="flex items-center md:order-2">
@@ -123,7 +126,7 @@ const RootLayout = () => {
                 {/* <HiMenu className="text-3xl" /> */}
               </button>
               <div id="targetEl" className="fixed right-2 top-16">
-                <FloatingMenu collapse={collapse} menuList={menuList} />
+                <FloatingMenu collapse={collapse} menuList={mainMenuLists} />
               </div>
             </div>
             <div
@@ -132,19 +135,25 @@ const RootLayout = () => {
             >
               <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 {/* Main menu here */}
-                {menuList.map((menu) => (
+                {mainMenuLists.generalMenuList.map((menu) => (
                   <li key={menu.url}>
                     <MainMenuButton config={menu} />
                   </li>
                 ))}
-                {user?.role === 'Administrator' &&
-                  adminMenuList.map((menu) => (
+                {checkAccessiblity('Administrator') &&
+                  mainMenuLists.adminMenuList.map((menu) => (
+                    <li key={menu.url}>
+                      <MainMenuButton config={menu} />
+                    </li>
+                  ))}
+                {checkAccessiblity('User') &&
+                  mainMenuLists.userMenuList.map((menu) => (
                     <li key={menu.url}>
                       <MainMenuButton config={menu} />
                     </li>
                   ))}
                 {!user?.id &&
-                  userMenuList.map((menu) => (
+                  mainMenuLists.antiUserMenuList.map((menu) => (
                     <li key={menu.url}>
                       <MainMenuButton config={menu} />
                     </li>

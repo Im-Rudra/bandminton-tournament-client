@@ -1,7 +1,10 @@
 import React from 'react';
+import useAuth from '../../hooks/useAuth';
+import checkAccessiblity from '../../utils/checkAccessiblity';
 import FloatingMenuButton from './FloatingMenuButton';
 
 const FloatingMenu = ({ collapse, menuList }) => {
+  const { user } = useAuth();
   return (
     <div
       className={
@@ -9,13 +12,37 @@ const FloatingMenu = ({ collapse, menuList }) => {
       }
     >
       <ul className="space-y-2">
-        {menuList?.map((menu, i) => {
+        {menuList?.generalMenuList?.map((menu) => {
           return (
-            <li key={i + 1}>
+            <li key={menu.url}>
               <FloatingMenuButton config={menu} />
             </li>
           );
         })}
+        {checkAccessiblity('User') &&
+          menuList?.userMenuList?.map((menu) => {
+            return (
+              <li key={menu.url}>
+                <FloatingMenuButton config={menu} />
+              </li>
+            );
+          })}
+        {checkAccessiblity('Administrator') &&
+          menuList?.adminMenuList?.map((menu) => {
+            return (
+              <li key={menu.url}>
+                <FloatingMenuButton config={menu} />
+              </li>
+            );
+          })}
+        {!user?.id &&
+          menuList?.antiUserMenuList?.map((menu) => {
+            return (
+              <li key={menu.url}>
+                <FloatingMenuButton config={menu} />
+              </li>
+            );
+          })}
       </ul>
     </div>
   );

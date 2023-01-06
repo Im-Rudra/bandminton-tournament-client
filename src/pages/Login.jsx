@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Card, Checkbox, Form, Input } from 'antd';
 import { PhoneFilled, MailFilled } from '@ant-design/icons';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user?.id) {
+      navigate('/');
+    }
+  }, [user]);
 
   const submitRequest = (val) => {
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'login', val, { withCredentials: true })
       .then((res) => {
         res.data?.id && setUser(res.data);
-        console.log(res);
       })
       .catch((err) => {
         setUser(null);
