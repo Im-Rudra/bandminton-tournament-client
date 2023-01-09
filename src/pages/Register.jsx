@@ -1,28 +1,41 @@
 import { Button, Card, Form, Input } from 'antd';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import useAuth from '../hooks/useAuth';
 const Register = () => {
   const { setUser } = useAuth();
+  const navigate = useNavigate();
 
   const registerRequest = (val) => {
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'register', val, { withCredentials: true })
       .then((res) => {
+        const { data } = res;
+        if (data?.error) {
+          console.log(data?.message);
+          return toast.error(data?.message);
+        }
+        if (data?.id) {
+          setUser(res.data);
+          toast.success('User registration successful');
+          navigate('/');
+        }
         res.data?.id && setUser(res.data);
         console.log(res.data);
       })
       .catch((err) => {
         setUser(null);
-        console.log(err.response.data);
+        console.log(err.message);
       });
   };
 
   const onFinish = (values) => {
-    // const regDoc = {
-    //   ...values,
-    //   remember: false
-    // };
-    registerRequest(values);
+    const regDoc = {
+      ...values,
+      remember: true
+    };
+    registerRequest(regDoc);
   };
 
   return (
@@ -44,6 +57,10 @@ const Register = () => {
                   {
                     required: true,
                     message: 'First name required'
+                  },
+                  {
+                    min: 2,
+                    message: 'At least 2 Charecters'
                   }
                 ]}
                 style={{
@@ -60,6 +77,10 @@ const Register = () => {
                   {
                     required: true,
                     message: 'Last name required'
+                  },
+                  {
+                    min: 2,
+                    message: 'At least 2 Charecters'
                   }
                 ]}
                 style={{
@@ -108,6 +129,10 @@ const Register = () => {
                 {
                   required: true,
                   message: 'Please input your password!'
+                },
+                {
+                  min: 6,
+                  message: 'Password length must be atleast 6'
                 }
               ]}
             >
