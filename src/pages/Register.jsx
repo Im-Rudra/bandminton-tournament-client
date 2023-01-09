@@ -18,6 +18,10 @@ const Register = () => {
   };
 
   const onFinish = (values) => {
+    // const regDoc = {
+    //   ...values,
+    //   remember: false
+    // };
     registerRequest(values);
   };
 

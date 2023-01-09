@@ -1,11 +1,12 @@
-import { Button, Tag } from 'antd';
+import { Spin } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import TournamentCard from './TournamentCard';
+import TournamentCard from '../../../components/TournamentCard';
+import NoTournament from '../../TeamRegistration/NoTournament';
 
 const Tournaments = () => {
   const [tournaments, setTournaments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getTournaments = () => {
     axios
@@ -15,10 +16,12 @@ const Tournaments = () => {
       .then((res) => res.data)
       .then((data) => {
         setTournaments(data);
-        console.log(data);
+        setLoading(false);
+        // console.log(data);
       })
       .catch((err) => {
-        console.log(err);
+        setLoading(false);
+        // console.log(err);
       });
   };
 
@@ -26,21 +29,31 @@ const Tournaments = () => {
     getTournaments();
   }, []);
 
+  if (loading) {
+    return (
+      <div
+        style={{ minHeight: 'calc(100vh - 170px)' }}
+        className="flex justify-center items-center"
+      >
+        <Spin size="large" />
+      </div>
+    );
+  }
+
   return (
     <div>
-      {/* <p>This is tournaments page</p>
-      <p>Here you can see all the tournaments</p>
-      <div className="w-full px-4 py-3 shadow mb-1 rounded">
-        <p className="text-xl text-cyan-800 cursor-pointer">
-          Tournament Name | {<Tag color="green">Open</Tag>}
-        </p>
-        <p>Total teams: 4 | Single: 2 | Double: 2</p>
-        <Button type="primary">Close Tournament</Button>
-      </div> */}
-      {tournaments.length > 0 &&
+      {tournaments.length > 0 ? (
         tournaments.map((tournament, i) => {
           return <TournamentCard key={tournament._id} tournament={tournament} />;
-        })}
+        })
+      ) : (
+        <NoTournament
+          title="No Tournament"
+          subTitle="No tournament found, Through a tournament"
+          redirect="create-tournament"
+          button="Create"
+        />
+      )}
     </div>
   );
 };

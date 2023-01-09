@@ -1,9 +1,12 @@
 import { Card, Form, Input, Button, DatePicker, notification } from 'antd';
 import axios from 'axios';
 import React from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CreateTournament = () => {
   const [api, contextHolder] = notification.useNotification();
+  const navigate = useNavigate();
   const openNotificationWithIcon = (type) => {
     api[type]({
       message: 'Tournament creation successful!'
@@ -17,8 +20,10 @@ const CreateTournament = () => {
       })
       .then((res) => res.data)
       .then((data) => {
-        openNotificationWithIcon('success');
-        console.log(data);
+        // openNotificationWithIcon('success');
+        toast.success('Tournament creation successful!');
+        navigate('/admin/tournaments');
+        // console.log(data);
       })
       .catch((err) => {
         console.log(err);

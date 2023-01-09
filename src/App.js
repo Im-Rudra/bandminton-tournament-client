@@ -4,6 +4,7 @@ import {
   Route,
   RouterProvider
 } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
 // layout imports
 import AdminLayout from './layouts/AdminLayout';
@@ -13,11 +14,12 @@ import TournamentLayout from './layouts/TournamentLayout';
 // page imports
 import Login from './pages/Login';
 import Register from './pages/Register';
-import TeamRegistration from './pages/TeamRegistration';
+import TeamRegistration from './pages/TeamRegistration/TeamRegistration';
 import Users from './pages/Admin/User/Users';
 import Tournaments from './pages/Admin/Tournament/Tournaments';
 import CreateTournament from './pages/Admin/Tournament/CreateTournament';
-import OpenTournaments from './pages/OpenTournaments';
+import OpenTournaments from './pages/TeamRegistration/OpenTournaments';
+import { ToastContainer } from 'react-toastify';
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -40,7 +42,23 @@ const routes = createBrowserRouter(
 );
 
 const App = () => {
-  return <RouterProvider router={routes} />;
+  return (
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <RouterProvider router={routes} />
+    </>
+  );
 };
 
 export default App;

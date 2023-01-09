@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Card, Checkbox, Form, Input } from 'antd';
+import { Button, Card, Checkbox, Form, Input, Spin } from 'antd';
 import { PhoneFilled, MailFilled } from '@ant-design/icons';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
@@ -14,6 +14,17 @@ const Login = () => {
       navigate('/');
     }
   }, [user]);
+
+  // if (true) {
+  //   return (
+  //     <div
+  //       style={{ minHeight: 'calc(100vh - 170px)' }}
+  //       className="fixed top-0 left-0 h-screen w-full flex justify-center items-center"
+  //     >
+  //       <Spin size="large" />
+  //     </div>
+  //   );
+  // }
 
   const submitRequest = (val) => {
     axios

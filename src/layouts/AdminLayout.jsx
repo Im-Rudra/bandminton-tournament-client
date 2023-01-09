@@ -99,9 +99,8 @@ const AdminLayout = () => {
           }}
         >
           <div
+            className="p-4 h-screen"
             style={{
-              padding: 16,
-              minHeight: '100vh',
               background: colorBgContainer
             }}
           >

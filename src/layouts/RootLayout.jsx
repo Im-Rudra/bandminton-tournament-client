@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import { Avatar, Button, Typography } from 'antd';
-import { BsFillInfoCircleFill } from 'react-icons/bs';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Button, Typography } from 'antd';
 import { MdAdminPanelSettings, MdSpaceDashboard } from 'react-icons/md';
 import { AiFillHome, AiOutlineUsergroupAdd } from 'react-icons/ai';
 import { RiLoginBoxFill } from 'react-icons/ri';
-// import { HiMenu } from 'react-icons/hi';
-
 import FloatingMenu from '../components/FloatingMenu/FloatingMenu';
 import MainMenuButton from '../components/MainMenu/MainMenuButton';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 import logo from '../img/logo.png';
-import { UserOutlined } from '@ant-design/icons';
 import checkAccessiblity from '../utils/checkAccessiblity';
 
 const mainMenuLists = {
@@ -25,7 +21,7 @@ const mainMenuLists = {
   ],
   userMenuList: [
     {
-      title: 'Team Registration',
+      title: 'Tournament Registration',
       url: 'team-registration',
       icon: <AiOutlineUsergroupAdd />
     }
@@ -39,12 +35,12 @@ const mainMenuLists = {
   ],
   antiUserMenuList: [
     {
-      title: 'Register',
+      title: 'User Sign Up',
       url: 'register',
       icon: <MdSpaceDashboard />
     },
     {
-      title: 'Login',
+      title: 'Sign In for Tournament',
       url: 'login',
       icon: <RiLoginBoxFill />
     }
@@ -55,12 +51,14 @@ const RootLayout = () => {
   const [collapse, setCollapse] = useState(false);
   const collapseHandler = () => setCollapse((prev) => !prev);
   const { user, setUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'logout', null, { withCredentials: true })
       .then((res) => {
         setUser(null);
+        navigate('/login');
         console.log(res);
       })
       .catch((err) => {
@@ -80,19 +78,8 @@ const RootLayout = () => {
               </span>
             </Link>
             <div className="flex items-center md:order-2">
-              {/* <button
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Get started
-              </button> */}
               {user?.id && (
                 <>
-                  {/* <Avatar
-                    shape="square"
-                    style={{ backgroundColor: '#87d068' }}
-                    icon={<UserOutlined />}
-                  /> */}
                   <Typography.Text keyboard style={{ marginLeft: 10 }}>
                     {user.lastName}
                   </Typography.Text>
@@ -163,7 +150,7 @@ const RootLayout = () => {
           </div>
         </nav>
       </div>
-      <div className="mt-20 mx-auto container">
+      <div className="pt-20 mx-auto container">
         <Outlet />
       </div>
     </div>
