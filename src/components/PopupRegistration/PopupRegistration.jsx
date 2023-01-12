@@ -2,20 +2,26 @@ import React, { useState } from 'react';
 import { Alert, Form, Input, Modal } from 'antd';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { getToken } from '../../utils/utils';
 
-const PopupRegistration = ({ open, onCreate, onCancel, setOpen }) => {
+const PopupRegistration = ({ open, onCreate, onCancel, setOpen, registerFunction, teamRegDoc }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  console.log(teamRegDoc);
 
   const registrationReq = async (val) => {
     setLoading(true);
     axios
-      .post(process.env.REACT_APP_SERVER_ORIGIN + 'adminForceRegistration', val, {
-        withCredentials: true
+      .post(process.env.REACT_APP_SERVER_ORIGIN + 'register', val, {
+        headers: {
+          Authorization: getToken()
+        }
       })
       .then((res) => {
         const data = res.data;
-        console.log(res.data);
+        // console.log(res.data);
         if (data?.error) {
           setLoading(false);
           return toast.error(data?.message);
@@ -24,6 +30,8 @@ const PopupRegistration = ({ open, onCreate, onCancel, setOpen }) => {
           setLoading(false);
           toast.success('Registration successful.');
           setOpen(false);
+          registerFunction();
+          // navigate('/');
         }
       })
       .catch((err) => {
@@ -50,9 +58,10 @@ const PopupRegistration = ({ open, onCreate, onCancel, setOpen }) => {
               password: '123456',
               remember: false
             };
+            registrationReq(submitDoc);
             // form.resetFields();
             // toast('this is toast');
-            toast.success('Registration complete');
+            // toast.success('Registration complete');
             // onCreate(values);
           })
           .catch((info) => {
@@ -105,6 +114,10 @@ const PopupRegistration = ({ open, onCreate, onCancel, setOpen }) => {
             {
               required: true,
               message: 'First name required'
+            },
+            {
+              min: 2,
+              message: 'At least 2 chars required'
             }
           ]}
         >
@@ -117,6 +130,10 @@ const PopupRegistration = ({ open, onCreate, onCancel, setOpen }) => {
             {
               required: true,
               message: 'Last name required'
+            },
+            {
+              min: 2,
+              message: 'At least 2 chars required'
             }
           ]}
         >

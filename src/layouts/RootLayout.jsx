@@ -9,6 +9,7 @@ import MainMenuButton from '../components/MainMenu/MainMenuButton';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 import logo from '../img/logo.png';
+import { HiMenu } from 'react-icons/hi';
 import checkAccessiblity from '../utils/checkAccessiblity';
 
 const mainMenuLists = {
@@ -53,17 +54,28 @@ const RootLayout = () => {
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
+  const closeHandler = () => setCollapse(false);
+
   const handleLogout = () => {
-    axios
-      .post(process.env.REACT_APP_SERVER_ORIGIN + 'logout', null, { withCredentials: true })
-      .then((res) => {
-        setUser(null);
-        navigate('/login');
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    localStorage.removeItem(process.env.REACT_APP_TOKEN_NAME);
+    setUser(null);
+    // axios
+    //   .post(process.env.REACT_APP_SERVER_ORIGIN + 'logout', null, {
+    //     headers: {
+    //       Authorization: getToken()
+    //     }
+    //   })
+    //   .then((res) => {
+    //     setUser(null);
+    //     if (res.data?.success) {
+    //       // console.log('he');
+    //       navigate('/login');
+    //     }
+    //     // console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
 
   return (
@@ -72,7 +84,7 @@ const RootLayout = () => {
         <nav className="bg-white px-2 sm:px-4 py-2.5 dark:bg-gray-900 fixed w-full z-20 top-0 left-0 border-b border-gray-200 dark:border-gray-600">
           <div className="container flex flex-wrap items-center justify-between mx-auto">
             <Link to="/" className="flex items-center">
-              <img src={logo} className="h-6 mr-3 sm:h-9" alt="Flowbite Logo" />
+              <img src={logo} className="h-10 lg:h-12 mr-3 sm:h-9" alt="Flowbite Logo" />
               <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
                 IANT Badminton
               </span>
@@ -108,12 +120,13 @@ const RootLayout = () => {
                     fillRule="evenodd"
                     d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
                     clipRule="evenodd"
-                  ></path>
+                  >
+                    <HiMenu className="text-3xl" />
+                  </path>
                 </svg>
-                {/* <HiMenu className="text-3xl" /> */}
               </button>
               <div id="targetEl" className="fixed right-2 top-16">
-                <FloatingMenu collapse={collapse} menuList={mainMenuLists} />
+                <FloatingMenu onClose={closeHandler} collapse={collapse} menuList={mainMenuLists} />
               </div>
             </div>
             <div

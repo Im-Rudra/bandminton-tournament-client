@@ -3,6 +3,7 @@ import axios from 'axios';
 import React from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getToken } from '../../../utils/utils';
 
 const CreateTournament = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -16,7 +17,9 @@ const CreateTournament = () => {
   const handleCreateTournament = (val) => {
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'createTournament', val, {
-        withCredentials: true
+        headers: {
+          Authorization: getToken()
+        }
       })
       .then((res) => res.data)
       .then((data) => {

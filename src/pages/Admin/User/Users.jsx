@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import axios from 'axios';
+import { getToken } from '../../../utils/utils';
 const columns = [
   {
     title: 'First Name',
@@ -92,7 +93,11 @@ const Users = () => {
     const url = process.env.REACT_APP_SERVER_ORIGIN + 'getUsers';
     setLoading(true);
     try {
-      const res = await axios.post(url, tableParams, { withCredentials: true });
+      const res = await axios.post(url, tableParams, {
+        headers: {
+          Authorization: getToken()
+        }
+      });
       if (!res.data?.totalUsers) {
         setTotalUsers(0);
         setUsers([]);

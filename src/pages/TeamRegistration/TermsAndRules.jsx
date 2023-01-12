@@ -58,9 +58,9 @@ const termsAndConditions = {
     <li>A walk over considers as 21-0.</li>,
     <li>
       Each participant is required to wear proper attire per{' '}
-      <Link target="_blank" to="">
+      <a target="_blank" rel="noreferrer" href="https://i.ibb.co/SxzmZNf/IANT-Gym-rules.jpg">
         IANT Gym Rule
-      </Link>{' '}
+      </a>{' '}
       and abide by the rule. Non-compliance will result in forfeiture of participation.
     </li>,
     <li>
@@ -77,9 +77,9 @@ const termsAndConditions = {
     <li>
       All game rules and regulation that are defined by the IBF (International Badminton Federation)
       shall stand unless defined otherwise by the committee. Please refer to{' '}
-      <Link target="_blank" to="https://www.worldbadminton.com/rules/">
+      <a target="_blank" rel="noreferrer" href="https://www.worldbadminton.com/rules/">
         International Badminton's rules
-      </Link>{' '}
+      </a>{' '}
       for more details.
     </li>,
     <li>
@@ -112,8 +112,10 @@ const TermsAndRules = ({ setAccept }) => {
       >
         <h2 className="text-lg font-bold">PURPOSES:</h2>
         <ul className="ml-3">
-          {termsAndConditions.purposes.map((term) => (
-            <li className="mt-2 list-disc">{term}</li>
+          {termsAndConditions.purposes.map((term, i) => (
+            <div key={'purpose-' + (i + 1)} className="mt-2 list-disc">
+              {term}
+            </div>
           ))}
         </ul>
         <p className="my-3">
@@ -122,8 +124,10 @@ const TermsAndRules = ({ setAccept }) => {
         </p>
         <h2 className="text-lg font-bold">Rules & Regulations:</h2>
         <ul className="ml-3">
-          {termsAndConditions.rules.map((term) => (
-            <div className="mt-2 list-disc">{term}</div>
+          {termsAndConditions.rules.map((rule, i) => (
+            <div key={'rule-' + (i + 1)} className="mt-2 list-disc">
+              {rule}
+            </div>
           ))}
         </ul>
         <p className="mt-6 mb-2">

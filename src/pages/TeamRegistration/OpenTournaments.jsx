@@ -2,6 +2,7 @@ import { Spin } from 'antd';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import TournamentCard from '../../components/TournamentCard';
+import { getToken } from '../../utils/utils';
 import NoTournament from './NoTournament';
 
 const OpenTournaments = () => {
@@ -12,13 +13,15 @@ const OpenTournaments = () => {
     setLoading(true);
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'getTournament', null, {
-        withCredentials: true
+        headers: {
+          Authorization: getToken()
+        }
       })
       .then((res) => res.data)
       .then((data) => {
         setTournament(data);
         setLoading(false);
-        console.log(data);
+        // console.log(data);
       })
       .catch((err) => {
         setLoading(false);

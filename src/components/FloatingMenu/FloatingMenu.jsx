@@ -3,7 +3,7 @@ import useAuth from '../../hooks/useAuth';
 import checkAccessiblity from '../../utils/checkAccessiblity';
 import FloatingMenuButton from './FloatingMenuButton';
 
-const FloatingMenu = ({ collapse, menuList }) => {
+const FloatingMenu = ({ collapse, menuList, onClose }) => {
   const { user } = useAuth();
   return (
     <div
@@ -14,7 +14,7 @@ const FloatingMenu = ({ collapse, menuList }) => {
       <ul className="space-y-2">
         {menuList?.generalMenuList?.map((menu) => {
           return (
-            <li key={menu.url}>
+            <li key={menu.url} onClick={onClose}>
               <FloatingMenuButton config={menu} />
             </li>
           );
@@ -22,7 +22,7 @@ const FloatingMenu = ({ collapse, menuList }) => {
         {checkAccessiblity('User') &&
           menuList?.userMenuList?.map((menu) => {
             return (
-              <li key={menu.url}>
+              <li key={menu.url} onClick={onClose}>
                 <FloatingMenuButton config={menu} />
               </li>
             );
@@ -30,7 +30,7 @@ const FloatingMenu = ({ collapse, menuList }) => {
         {checkAccessiblity('Administrator') &&
           menuList?.adminMenuList?.map((menu) => {
             return (
-              <li key={menu.url}>
+              <li key={menu.url} onClick={onClose}>
                 <FloatingMenuButton config={menu} />
               </li>
             );
@@ -38,7 +38,7 @@ const FloatingMenu = ({ collapse, menuList }) => {
         {!user?.id &&
           menuList?.antiUserMenuList?.map((menu) => {
             return (
-              <li key={menu.url}>
+              <li key={menu.url} onClick={onClose}>
                 <FloatingMenuButton config={menu} />
               </li>
             );

@@ -3,13 +3,18 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useAuth from '../hooks/useAuth';
+import { getToken, setToken } from '../utils/utils';
 const Register = () => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const registerRequest = (val) => {
     axios
-      .post(process.env.REACT_APP_SERVER_ORIGIN + 'register', val, { withCredentials: true })
+      .post(process.env.REACT_APP_SERVER_ORIGIN + 'register', val, {
+        headers: {
+          Authorization: getToken()
+        }
+      })
       .then((res) => {
         const { data } = res;
         if (data?.error) {
@@ -17,6 +22,7 @@ const Register = () => {
           return toast.error(data?.message);
         }
         if (data?.id) {
+          setToken(res.headers['x-auth-token']);
           setUser(res.data);
           toast.success('User registration successful');
           navigate('/');

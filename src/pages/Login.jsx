@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, Checkbox, Form, Input, Spin } from 'antd';
 import { PhoneFilled, MailFilled } from '@ant-design/icons';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { getToken, setToken } from '../utils/utils';
+import { toast } from 'react-toastify';
 
 const Login = () => {
   const { user, setUser } = useAuth();
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,19 +20,28 @@ const Login = () => {
 
   // if (true) {
   //   return (
-  //     <div
-  //       style={{ minHeight: 'calc(100vh - 170px)' }}
-  //       className="fixed top-0 left-0 h-screen w-full flex justify-center items-center"
-  //     >
-  //       <Spin size="large" />
-  //     </div>
+  // <div
+  //   style={{ minHeight: 'calc(100vh - 170px)' }}
+  //   className="fixed top-0 left-0 h-screen w-full flex justify-center items-center"
+  // >
+  //   <Spin size="large" />
+  // </div>
   //   );
   // }
 
   const submitRequest = (val) => {
     axios
-      .post(process.env.REACT_APP_SERVER_ORIGIN + 'login', val, { withCredentials: true })
+      .post(process.env.REACT_APP_SERVER_ORIGIN + 'login', val, {
+        headers: {
+          Authorization: getToken()
+        }
+      })
       .then((res) => {
+        if (res.data.error) {
+          toast.error(res.data.message);
+        }
+        // console.log(res.headers['x-auth-token']);
+        setToken(res.headers['x-auth-token']);
         res.data?.id && setUser(res.data);
       })
       .catch((err) => {
@@ -57,10 +69,21 @@ const Login = () => {
 
   return (
     <div className="mx-auto">
-      <div className="container flex justify-center sm:mt-20 mt-36">
+      {loading && (
+        <div
+          style={{ minHeight: 'calc(100vh - 170px)', backgroundColor: 'rgba(0, 0, 0, 0.2)' }}
+          className="fixed top-0 left-0 h-screen w-full flex justify-center items-center z-50"
+        >
+          <Spin size="large" />
+        </div>
+      )}
+      <div className="container flex justify-center mt-8">
         <Card
           style={{
-            width: 300
+            minWidth: 300,
+            maxWidth: 500,
+            width: '100%',
+            margin: '0 10px'
           }}
         >
           <Form

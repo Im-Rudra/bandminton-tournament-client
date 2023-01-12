@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Button, Card, Form, Input, Modal, Radio, Result, Spin } from 'antd';
+import { Button, Card, Divider, Form, Input, Modal, Radio, Result, Spin } from 'antd';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import PopupRegistration from '../../components/PopupRegistration/PopupRegistration';
 import { toast } from 'react-toastify';
 import useAuth from '../../hooks/useAuth';
 import TermsAndRules from './TermsAndRules';
+import { getToken } from '../../utils/utils';
 
 const regConfirmMessage = {
-  Single: `Congratulation for participating IANT-Badminton Tournament! Please pay your ENTRY FEE to complete your registration.
-  The single player’s entry fee is $30.
-  Please use Zelle to complete your transaction.
-  The person’s name is Md Omar Faruk (214-414-6260).`,
-  Double: `Congratulation for participating IANT-Badminton Tournament! Please pay your ENTRY FEE to complete your registration.
-  The double player’s entry fee is $60.
-  Please use Zelle to complete your transaction.
-  The person’s name is Md Omar Faruk (214-414-6260).`
+  Single: `Thank you for taking part in the IANT-Badminton Tournament!
+  To finalize your registration, kindly pay your entry fee.
+  The entry fee for a Single participant is $30.
+  To finish your transaction, kindly use Zelle. Please Zelle to Md. Omar Faruk (214-414-6260).`,
+  Double: `Thank you for taking part in the IANT-Badminton Tournament!
+  To finalize your registration, kindly pay your entry fee.
+  The entry fee for Double participants is $60.
+  To finish your transaction, kindly use Zelle. Please Zelle to Md. Omar Faruk (214-414-6260).`
 };
 
 const TeamRegistration = () => {
@@ -49,7 +50,9 @@ const TeamRegistration = () => {
       setLoading(true);
       axios
         .post(process.env.REACT_APP_SERVER_ORIGIN + 'checkTeamRegistrablity', checkDoc, {
-          withCredentials: true
+          headers: {
+            Authorization: getToken()
+          }
         })
         .then((res) => {
           const { data } = res;
@@ -86,18 +89,22 @@ const TeamRegistration = () => {
     setLoading(true);
     axios
       .post(process.env.REACT_APP_SERVER_ORIGIN + 'teamRegistration', val, {
-        withCredentials: true
+        headers: {
+          Authorization: getToken()
+        }
       })
       .then((res) => {
         if (res.data.error) {
           // console.log('error', res.data);
-          toast.error(res.data.message);
           setLoading(false);
-          if (res.data.errorType === 'create-new-user') {
-            return setOpen(true);
-          }
-          if (res.data?.redirect) {
-            navigate(res.data.redirect);
+          // if (res.data.errorType === 'create-new-user') {
+          //   return setOpen(true);
+          // }
+          if (res.data.error) {
+            toast.error(res.data.message);
+            if (res.data?.redirect) {
+              navigate(res.data.redirect);
+            }
           }
         }
         if (res.data._id) {
@@ -112,7 +119,7 @@ const TeamRegistration = () => {
           });
         }
         setLoading(false);
-        console.log(res.data);
+        // console.log(res.data);
       })
       .catch((err) => {
         setLoading(false);
@@ -120,13 +127,18 @@ const TeamRegistration = () => {
       });
   };
 
+  let teamRegDoc;
+
   const onFinish = (values) => {
-    const teamRegDoc = {
+    teamRegDoc = {
       ...values,
       tournament: tournamentID
     };
+    // console.log(teamRegDoc);
     teamRegisterRequest(teamRegDoc);
+    // console.log(values);
   };
+  // console.log(teamRegDoc);
 
   // const onPopRegReq = (values) => {
   //   console.log(values);
@@ -137,16 +149,16 @@ const TeamRegistration = () => {
 
   // console.log(email);
 
-  if (loading) {
-    return (
-      <div
-        style={{ minHeight: 'calc(100vh - 170px)' }}
-        className="flex justify-center items-center"
-      >
-        <Spin size="large" />
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div
+  //       style={{ minHeight: 'calc(100vh - 170px)' }}
+  //       className="flex justify-center items-center"
+  //     >
+  //       <Spin size="large" />
+  //     </div>
+  //   );
+  // }
 
   if (verdictObj?.Single && verdictObj?.Double) {
     return (
@@ -163,101 +175,158 @@ const TeamRegistration = () => {
     );
   }
 
-  if (!accept) {
-    return <TermsAndRules setAccept={setAccept} />;
-  }
+  // if (!accept && !loading) {
+  //   return ;
+  // }
 
   // console.log('ver', verdictObj);
 
   return (
     <div>
-      <h2 className="text-2xl text-center">Register Your Team</h2>
-      <div className="mx-auto">
-        <div className="flex justify-center mt-3">
-          <Card
-            style={{
-              minWidth: 300,
-              padding: '0 10px'
-            }}
-          >
-            <Form name="teamRegistration" onFinish={onFinish} layout="vertical">
-              <Form.Item
-                label="Team Name"
-                name="teamName"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Team name is required'
-                  }
-                ]}
-              >
-                <Input placeholder="Team Name" />
-              </Form.Item>
-
-              {/* team type */}
-              <Form.Item
-                label="Team type"
-                name="teamType"
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please select a team type'
-                  }
-                ]}
-              >
-                <Radio.Group value={teamType} onChange={(e) => setTeamType(e.target.value)}>
-                  <Radio.Button disabled={verdictObj?.Single} value="Single">
-                    Single
-                  </Radio.Button>
-                  <Radio.Button disabled={verdictObj?.Double} value="Double">
-                    Double
-                  </Radio.Button>
-                </Radio.Group>
-              </Form.Item>
-
-              {/* Second player email */}
-              {teamType === 'Double' && (
-                <Form.Item
-                  label="Second Player"
-                  name="secondPlayer"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'second player email is required'
-                    }
-                  ]}
-                >
-                  <Input
-                    type="email"
-                    placeholder="Second player email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </Form.Item>
-              )}
-
-              {/* Submit button */}
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Form.Item>
-            </Form>
-          </Card>
+      {loading && (
+        <div
+          style={{ minHeight: 'calc(100vh - 170px)', backgroundColor: 'rgba(0, 0, 0, 0.2)' }}
+          className="fixed top-0 left-0 h-screen w-full flex justify-center items-center z-50"
+        >
+          <Spin size="large" />
         </div>
+      )}
+      {!accept ? (
+        <TermsAndRules setAccept={setAccept} />
+      ) : (
+        <>
+          <h2 className="text-2xl text-center">Register Your Team</h2>
+          <div className="mx-auto">
+            <div className="flex justify-center mt-3">
+              <Card
+                style={{
+                  minWidth: 300,
+                  padding: '0 10px'
+                }}
+              >
+                <Form name="teamRegistration" onFinish={onFinish} layout="vertical">
+                  <Form.Item
+                    label="Team Name"
+                    name="teamName"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Team name is required'
+                      }
+                    ]}
+                  >
+                    <Input placeholder="Team Name" />
+                  </Form.Item>
 
-        {/* <Button onClick={() => setOpen(true)} type="primary">
-          open modal
-        </Button> */}
-        <PopupRegistration
-          open={open}
-          setOpen={setOpen}
-          onCreate={onCreate}
-          onCancel={() => {
-            setOpen(false);
-          }}
-        />
-      </div>
+                  {/* team type */}
+                  <Form.Item
+                    label="Team type"
+                    name="teamType"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please select a team type'
+                      }
+                    ]}
+                  >
+                    <Radio.Group value={teamType} onChange={(e) => setTeamType(e.target.value)}>
+                      <Radio.Button disabled={verdictObj?.Single} value="Single">
+                        Single
+                      </Radio.Button>
+                      <Radio.Button disabled={verdictObj?.Double} value="Double">
+                        Double
+                      </Radio.Button>
+                    </Radio.Group>
+                  </Form.Item>
+
+                  {/* Second player email */}
+                  {teamType === 'Double' && (
+                    <>
+                      <Divider orientation="center">Second Player Info</Divider>
+                      {/* <Form.Item
+                        label="Second Player"
+                        name="secondPlayer"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'second player email is required'
+                          }
+                        ]}
+                      >
+                        <Input
+                          type="email"
+                          placeholder="Second player email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </Form.Item> */}
+                      <Form.Item
+                        label="Full Name"
+                        name="fullName_2"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Name is required'
+                          },
+                          {
+                            min: 2,
+                            message: 'Must be 2 chars at least'
+                          }
+                        ]}
+                      >
+                        <Input
+                          type="text"
+                          placeholder="Second player full name"
+                          // value={email}
+                          // onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Phone"
+                        name="phone_2"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'phone is required'
+                          }
+                        ]}
+                      >
+                        <Input
+                          type="text"
+                          placeholder="Second player phone"
+                          // value={email}
+                          // onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </Form.Item>
+                    </>
+                  )}
+
+                  {/* Submit button */}
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                      Submit
+                    </Button>
+                  </Form.Item>
+                </Form>
+              </Card>
+            </div>
+
+            {/* <Button onClick={() => setOpen(true)} type="primary">
+            open modal
+          </Button> */}
+            {/* <PopupRegistration
+              open={open}
+              setOpen={setOpen}
+              onCreate={onCreate}
+              teamRegDoc={teamRegDoc}
+              registerFunction={teamRegisterRequest}
+              onCancel={() => {
+                setOpen(false);
+              }}
+            /> */}
+          </div>
+        </>
+      )}
 
       {/* drawer */}
       {/* <div>
